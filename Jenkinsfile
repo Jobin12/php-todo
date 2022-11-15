@@ -53,22 +53,36 @@ pipeline {
 
       }
     }
-    stage('SonarQube Quality Gate') {
-        environment {
-            scannerHome = tool 'SonarQube'
-        }
-        steps {
-            withSonarQubeEnv('SonarQube') {
-                sh "${scannerHome}/bin/sonar-scanner"
-            }
+    // stage('SonarQube Quality Gate') {
+    //     environment {
+    //         scannerHome = tool 'SonarQube'
+    //     }
+    //     steps {
+    //         withSonarQubeEnv('SonarQube') {
+    //             sh "${scannerHome}/bin/sonar-scanner"
+    //         }
 
+    //     }
+    // }
+    // stage ('Package Artifact') {
+    // steps {
+    //         sh 'zip -qr php-todo.zip ${WORKSPACE}/*'
+    //  }
+    // }
+    stage('SonarQube Quality Gate') {
+  when { branch pattern: "^develop*|^hotfix*|^release*|^main*", comparator: "REGEXP"}
+    environment {
+        scannerHome = tool 'SonarQube'
+    }
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+        }
+        timeout(time: 1, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
         }
     }
-    stage ('Package Artifact') {
-    steps {
-            sh 'zip -qr php-todo.zip ${WORKSPACE}/*'
-     }
-    }
+}
     stage ('Upload Artifact to Artifactory') {
           steps {
             script { 
