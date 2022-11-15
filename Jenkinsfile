@@ -55,10 +55,10 @@ pipeline {
     }
     stage('SonarQube Quality Gate') {
         environment {
-            scannerHome = tool 'SonarQubeScanner'
+            scannerHome = tool 'SonarQube'
         }
         steps {
-            withSonarQubeEnv('sonarqube') {
+            withSonarQubeEnv('SonarQube') {
                 sh "${scannerHome}/bin/sonar-scanner"
             }
 
