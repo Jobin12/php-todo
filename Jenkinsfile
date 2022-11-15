@@ -59,7 +59,7 @@ pipeline {
         }
         steps {
             withSonarQubeEnv('SonarQube') {
-                sh "sudo ${scannerHome}/bin/sonar-scanner"
+                sh "${scannerHome}/bin/sonar-scanner"
             }
 
         }
